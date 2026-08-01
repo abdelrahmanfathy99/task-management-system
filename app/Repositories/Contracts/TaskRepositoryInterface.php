@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Contracts;
 
+use App\DTOs\Api\V1\TaskDashboardStatsDTO;
 use App\DTOs\Pagination\PaginatedResultDTO;
 use App\DTOs\Pagination\PaginationParamsDTO;
 use App\Enums\TaskPriority;
@@ -22,6 +23,8 @@ interface TaskRepositoryInterface
         ?TaskStatus $status = null,
         ?TaskPriority $priority = null
     ): PaginatedResultDTO;
+
+    public function dashboardStatsForUser(int $userId): TaskDashboardStatsDTO;
 
     public function save(array $data, ?Task $task = null): Task;
 

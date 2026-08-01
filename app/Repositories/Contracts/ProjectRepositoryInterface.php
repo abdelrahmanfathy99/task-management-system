@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Contracts;
 
+use App\DTOs\Api\V1\ProjectDashboardStatsDTO;
 use App\DTOs\Pagination\PaginatedResultDTO;
 use App\DTOs\Pagination\PaginationParamsDTO;
 use App\Enums\ProjectStatus;
@@ -20,6 +21,8 @@ interface ProjectRepositoryInterface
         ?string $search = null,
         ?ProjectStatus $status = null
     ): PaginatedResultDTO;
+
+    public function dashboardStatsForUser(int $userId): ProjectDashboardStatsDTO;
 
     public function save(array $data, ?Project $project = null): Project;
 

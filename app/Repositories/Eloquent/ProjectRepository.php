@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\DTOs\Api\V1\ProjectDashboardStatsDTO;
 use App\DTOs\Pagination\PaginatedResultDTO;
 use App\DTOs\Pagination\PaginationParamsDTO;
 use App\Enums\ProjectStatus;
@@ -41,6 +42,24 @@ class ProjectRepository implements ProjectRepositoryInterface
             ->orderByDesc('id');
 
         return $this->paginator->paginate($query, $pagination);
+    }
+
+    public function dashboardStatsForUser(int $userId): ProjectDashboardStatsDTO
+    {
+        $stats = Project::query()
+            ->where('user_id', $userId)
+            ->toBase()
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw(
+                'COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) as active',
+                [ProjectStatus::Active->value]
+            )
+            ->first();
+
+        return new ProjectDashboardStatsDTO(
+            total: (int) ($stats->total ?? 0),
+            active: (int) ($stats->active ?? 0)
+        );
     }
 
     public function save(array $data, ?Project $project = null): Project

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use App\Http\Controllers\Api\V1\TaskController;
 use App\Http\Controllers\Api\V1\UserAuthController;
@@ -20,6 +21,7 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/dashboard', DashboardController::class);
     Route::apiResource('projects', ProjectController::class);
     Route::apiResource('projects.tasks', TaskController::class)->except(['show']);
 });
