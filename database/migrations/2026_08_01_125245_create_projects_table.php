@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('status')->default(ProjectStatus::Active->value);
+            $table->string('status')->default(ProjectStatus::Active->value)->index();
             $table->timestamps();
             $table->softDeletes();
         });
