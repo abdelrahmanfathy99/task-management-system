@@ -41,13 +41,17 @@ php artisan key:generate
 
 Update your `.env` file with your database credentials (see [Environment Setup](#environment-setup) below).
 
-### Step 5: Run Migrations
+### Step 5: Setup Database
+
+Choose one of the following options:
+
+#### Option 1: Run Migrations & Seeders (Recommended for Development)
 
 ```bash
 php artisan migrate
 ```
 
-### Step 6: Seed the Database
+Then seed the database with sample data:
 
 ```bash
 php artisan db:seed
@@ -55,13 +59,21 @@ php artisan db:seed
 
 This will create sample users, projects, and tasks with realistic data.
 
-### Step 7: Generate API Documentation
+#### Option 2: Import SQL Dump (Quick Setup)
+
+Alternatively, you can quickly set up the database using the provided SQL dump file:
+
+```bash
+mysql -h 127.0.0.1 -u root -p task_management < database/dumps/task_management_system.sql
+```
+
+### Step 6: Generate API Documentation
 
 ```bash
 php artisan l5-swagger:generate
 ```
 
-### Step 8: Start the Development Server
+### Step 7: Start the Development Server
 
 ```bash
 php artisan serve
