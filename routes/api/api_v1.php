@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ProjectController;
 use App\Http\Controllers\Api\V1\UserAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,4 +16,8 @@ Route::prefix('auth')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [UserAuthController::class, 'logout']);
     });
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('projects', ProjectController::class);
 });
