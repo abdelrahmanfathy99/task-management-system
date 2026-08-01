@@ -2,6 +2,7 @@
 
 namespace App\Services\Api\V1;
 
+use App\DTOs\Api\V1\ListProjectsDTO;
 use App\DTOs\Api\V1\ProjectResultDTO;
 use App\Models\Project;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
@@ -16,10 +17,10 @@ final class ListProjectsService
     /**
      * @return Collection<int, ProjectResultDTO>
      */
-    public function execute(int $userId): Collection
+    public function execute(ListProjectsDTO $dto): Collection
     {
         return $this->projectRepository
-            ->listForUser($userId)
+            ->listForUser($dto->userId, $dto->search, $dto->status)
             ->map(fn (Project $project) => $this->toResultDTO($project));
     }
 

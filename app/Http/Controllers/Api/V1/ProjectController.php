@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\DTOs\Api\V1\CreateProjectDTO;
+use App\DTOs\Api\V1\ListProjectsDTO;
 use App\DTOs\Api\V1\UpdateProjectDTO;
 use App\Enums\ProjectStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CreateProjectRequest;
+use App\Http\Requests\Api\V1\ListProjectsRequest;
 use App\Http\Requests\Api\V1\UpdateProjectRequest;
 use App\Http\Resources\Api\V1\CreateProjectResource;
 use App\Http\Resources\Api\V1\ProjectCollectionResource;
@@ -22,11 +24,19 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    public function index(Request $request, ListProjectsService $action): JsonResponse
+    public function index(ListProjectsRequest $request, ListProjectsService $action): JsonResponse
     {
-        $userId = (int) $request->user()->id;
+        $validated = $request->validated();
 
-        $result = $action->execute($userId);
+        $dto = new ListProjectsDTO(
+            userId: (int) $request->user()->id,
+            search: $validated['search'] ?? null,
+            status: isset($validated['status'])
+                ? ProjectStatus::from($validated['status'])
+                : null
+        );
+
+        $result = $action->execute($dto);
 
         return (new ProjectCollectionResource($result))->response();
     }

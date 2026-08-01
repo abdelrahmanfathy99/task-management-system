@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Enums\ProjectStatus;
 use App\Models\Project;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
 use Illuminate\Support\Collection;
@@ -16,10 +17,17 @@ class ProjectRepository implements ProjectRepositoryInterface
             ->first();
     }
 
-    public function listForUser(int $userId): Collection
+    public function listForUser(int $userId, ?string $search = null, ?ProjectStatus $status = null): Collection
     {
         return Project::query()
             ->where('user_id', $userId)
+            ->when($search, function ($query, string $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
+            ->when($status, fn ($query) => $query->where('status', $status))
             ->latest()
             ->get();
     }
