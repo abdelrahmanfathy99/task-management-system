@@ -11,10 +11,7 @@ class LoginUserResource extends JsonResource
     {
         return [
             'message' => 'Login successful',
-            'user_id' => $this->resource->userId,
-            'name' => $this->resource->name,
-            'email' => $this->resource->email,
-            'token' => $this->resource->token,
+            'data' => new UserResource($this->resource),
         ];
     }
 }

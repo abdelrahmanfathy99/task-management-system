@@ -11,10 +11,7 @@ class RegisterUserResource extends JsonResource
     {
         return [
             'message' => 'Registration successful',
-            'user_id' => $this->resource->userId,
-            'name' => $this->resource->name,
-            'email' => $this->resource->email,
-            'token' => $this->resource->token,
+            'data' => new UserResource($this->resource),
         ];
     }
 }
