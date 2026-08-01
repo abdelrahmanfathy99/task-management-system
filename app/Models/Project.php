@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Enums\ProjectStatus;
+use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +13,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['user_id', 'name', 'description', 'status'])]
 class Project extends Model
 {
-    use SoftDeletes;
+    /** @use HasFactory<ProjectFactory> */
+    use HasFactory, SoftDeletes;
 
     /**
      * @return array<string, string>
