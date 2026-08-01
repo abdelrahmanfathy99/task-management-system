@@ -12,6 +12,8 @@ class UpdateTaskDTO
         public ?string $description,
         public ?string $priority,
         public ?string $status,
-        public ?string $dueDate
+        public ?string $dueDate,
+        public bool $descriptionProvided = false,
+        public bool $dueDateProvided = false,
     ) {}
 }

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['project_id', 'title', 'description', 'priority', 'status', 'due_date'])]
+#[Fillable(['project_id', 'title', 'description', 'priority', 'status', 'due_date', 'overdue_notified_at'])]
 class Task extends Model
 {
     /** @use HasFactory<TaskFactory> */
@@ -26,11 +26,21 @@ class Task extends Model
             'priority' => TaskPriority::class,
             'status' => TaskStatus::class,
             'due_date' => 'date',
+            'overdue_notified_at' => 'datetime',
         ];
     }
 
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function isOverdue(): bool
+    {
+        if ($this->due_date === null || $this->status === TaskStatus::Done) {
+            return false;
+        }
+
+        return $this->due_date->copy()->startOfDay()->lt(now()->startOfDay());
     }
 }

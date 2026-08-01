@@ -80,7 +80,9 @@ class TaskController extends Controller
             description: $validated['description'] ?? null,
             priority: $validated['priority'] ?? null,
             status: $validated['status'] ?? null,
-            dueDate: $validated['due_date'] ?? null
+            dueDate: $validated['due_date'] ?? null,
+            descriptionProvided: array_key_exists('description', $validated),
+            dueDateProvided: array_key_exists('due_date', $validated),
         );
 
         $result = $action->execute($dto);
