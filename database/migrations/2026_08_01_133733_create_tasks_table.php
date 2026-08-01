@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('priority')->default(TaskPriority::Medium->value)->index();
             $table->string('status')->default(TaskStatus::Todo->value)->index();
             $table->date('due_date')->nullable();
+            $table->timestamp('overdue_notified_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
