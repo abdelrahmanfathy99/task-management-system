@@ -10,9 +10,9 @@ Route::get('/', function () {
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [UserAuthController::class, 'register']);
-    Route::post('/login', [UserAuthController::class, 'login']);
-});
+    Route::post('/login', [UserAuthController::class, 'login'])->middleware('throttle:5,1');
 
-Route::middleware('auth:sanctum')->prefix('auth')->group(function () {
-    Route::post('/logout', [UserAuthController::class, 'logout']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [UserAuthController::class, 'logout']);
+    });
 });
