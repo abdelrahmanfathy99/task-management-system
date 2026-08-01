@@ -22,9 +22,26 @@ use App\Services\Api\V1\UpdateProjectService;
 use App\Services\Api\V1\ViewProjectService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class ProjectController extends Controller
 {
+    #[OA\Get(
+        path: '/projects',
+        summary: 'List projects',
+        tags: ['Projects'],
+        security: [['sanctum' => []]],
+        parameters: [
+            new OA\Parameter(name: 'search', in: 'query', required: false, schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(name: 'status', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['active', 'completed', 'archived'])),
+            new OA\Parameter(name: 'cursor', in: 'query', required: false, schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(name: 'per_page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 100, example: 15)),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Projects retrieved successfully'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ]
+    )]
     public function index(ListProjectsRequest $request, ListProjectsService $action): JsonResponse
     {
         $validated = $request->validated();
@@ -46,6 +63,28 @@ class ProjectController extends Controller
         return (new ProjectCollectionResource($result))->response();
     }
 
+    #[OA\Post(
+        path: '/projects',
+        summary: 'Create a project',
+        tags: ['Projects'],
+        security: [['sanctum' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['name'],
+                properties: [
+                    new OA\Property(property: 'name', type: 'string', example: 'Website Redesign'),
+                    new OA\Property(property: 'description', type: 'string', nullable: true, example: 'Rebuild the marketing site'),
+                    new OA\Property(property: 'status', type: 'string', enum: ['active', 'completed', 'archived'], example: 'active'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Project created successfully'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ]
+    )]
     public function store(CreateProjectRequest $request, CreateProjectService $action): JsonResponse
     {
         $validated = $request->validated();
@@ -62,6 +101,20 @@ class ProjectController extends Controller
         return (new CreateProjectResource($result))->response()->setStatusCode(201);
     }
 
+    #[OA\Get(
+        path: '/projects/{project}',
+        summary: 'Get a project',
+        tags: ['Projects'],
+        security: [['sanctum' => []]],
+        parameters: [
+            new OA\Parameter(name: 'project', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Project retrieved successfully'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Project not found'),
+        ]
+    )]
     public function show(Request $request, int $project, ViewProjectService $action): JsonResponse
     {
         $userId = (int) $request->user()->id;
@@ -71,6 +124,31 @@ class ProjectController extends Controller
         return (new ShowProjectResource($result))->response();
     }
 
+    #[OA\Put(
+        path: '/projects/{project}',
+        summary: 'Update a project',
+        tags: ['Projects'],
+        security: [['sanctum' => []]],
+        parameters: [
+            new OA\Parameter(name: 'project', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'name', type: 'string', example: 'Website Redesign'),
+                    new OA\Property(property: 'description', type: 'string', nullable: true),
+                    new OA\Property(property: 'status', type: 'string', enum: ['active', 'completed', 'archived']),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Project updated successfully'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Project not found'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ]
+    )]
     public function update(UpdateProjectRequest $request, int $project, UpdateProjectService $action): JsonResponse
     {
         $validated = $request->validated();
@@ -88,6 +166,20 @@ class ProjectController extends Controller
         return (new UpdateProjectResource($result))->response();
     }
 
+    #[OA\Delete(
+        path: '/projects/{project}',
+        summary: 'Delete a project',
+        tags: ['Projects'],
+        security: [['sanctum' => []]],
+        parameters: [
+            new OA\Parameter(name: 'project', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Project deleted successfully'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Project not found'),
+        ]
+    )]
     public function destroy(Request $request, int $project, DeleteProjectService $action): JsonResponse
     {
         $userId = (int) $request->user()->id;
