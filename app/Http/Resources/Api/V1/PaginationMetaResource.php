@@ -6,10 +6,10 @@ use App\DTOs\Pagination\PaginatedResultDTO;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProjectCollectionResource extends JsonResource
+class PaginationMetaResource extends JsonResource
 {
     /**
-     * @param  PaginatedResultDTO<\App\DTOs\Api\V1\ProjectResultDTO>  $resource
+     * @param  PaginatedResultDTO<mixed>  $resource
      */
     public function __construct(PaginatedResultDTO $resource)
     {
@@ -18,13 +18,14 @@ class ProjectCollectionResource extends JsonResource
 
     public function toArray(Request $request): array
     {
-        /** @var PaginatedResultDTO<\App\DTOs\Api\V1\ProjectResultDTO> $result */
+        /** @var PaginatedResultDTO<mixed> $result */
         $result = $this->resource;
 
         return [
-            'message' => 'Projects retrieved successfully',
-            'data' => ProjectResource::collection($result->items),
-            'meta' => new PaginationMetaResource($result),
+            'per_page' => $result->perPage,
+            'next_cursor' => $result->nextCursor,
+            'prev_cursor' => $result->previousCursor,
+            'has_more' => $result->hasMore,
         ];
     }
 }

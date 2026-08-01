@@ -2,18 +2,24 @@
 
 namespace App\Repositories\Contracts;
 
+use App\DTOs\Pagination\PaginatedResultDTO;
+use App\DTOs\Pagination\PaginationParamsDTO;
 use App\Enums\ProjectStatus;
 use App\Models\Project;
-use Illuminate\Support\Collection;
 
 interface ProjectRepositoryInterface
 {
     public function findByIdForUser(int $id, int $userId): ?Project;
 
     /**
-     * @return Collection<int, Project>
+     * @return PaginatedResultDTO<Project>
      */
-    public function listForUser(int $userId, ?string $search = null, ?ProjectStatus $status = null): Collection;
+    public function listForUser(
+        int $userId,
+        PaginationParamsDTO $pagination,
+        ?string $search = null,
+        ?ProjectStatus $status = null
+    ): PaginatedResultDTO;
 
     public function save(array $data, ?Project $project = null): Project;
 

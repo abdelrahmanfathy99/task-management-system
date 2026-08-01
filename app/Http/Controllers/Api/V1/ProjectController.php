@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\DTOs\Api\V1\CreateProjectDTO;
 use App\DTOs\Api\V1\ListProjectsDTO;
 use App\DTOs\Api\V1\UpdateProjectDTO;
+use App\DTOs\Pagination\PaginationParamsDTO;
 use App\Enums\ProjectStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CreateProjectRequest;
@@ -30,6 +31,10 @@ class ProjectController extends Controller
 
         $dto = new ListProjectsDTO(
             userId: (int) $request->user()->id,
+            pagination: new PaginationParamsDTO(
+                cursor: $validated['cursor'] ?? null,
+                perPage: (int) ($validated['per_page'] ?? 15)
+            ),
             search: $validated['search'] ?? null,
             status: isset($validated['status'])
                 ? ProjectStatus::from($validated['status'])

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Pagination\Contracts\PaginatorInterface;
+use App\Pagination\CursorPaginator;
 use App\Repositories\Contracts\AuthTokenGenerator;
 use App\Repositories\Eloquent\SanctumAuthTokenGenerator;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -15,6 +17,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(AuthTokenGenerator::class, SanctumAuthTokenGenerator::class);
+        $this->app->bind(PaginatorInterface::class, CursorPaginator::class);
     }
 
     /**

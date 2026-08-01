@@ -4,9 +4,9 @@ namespace App\Services\Api\V1;
 
 use App\DTOs\Api\V1\ListProjectsDTO;
 use App\DTOs\Api\V1\ProjectResultDTO;
+use App\DTOs\Pagination\PaginatedResultDTO;
 use App\Models\Project;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
-use Illuminate\Support\Collection;
 
 final class ListProjectsService
 {
@@ -15,12 +15,12 @@ final class ListProjectsService
     ) {}
 
     /**
-     * @return Collection<int, ProjectResultDTO>
+     * @return PaginatedResultDTO<ProjectResultDTO>
      */
-    public function execute(ListProjectsDTO $dto): Collection
+    public function execute(ListProjectsDTO $dto): PaginatedResultDTO
     {
         return $this->projectRepository
-            ->listForUser($dto->userId, $dto->search, $dto->status)
+            ->listForUser($dto->userId, $dto->pagination, $dto->search, $dto->status)
             ->map(fn (Project $project) => $this->toResultDTO($project));
     }
 

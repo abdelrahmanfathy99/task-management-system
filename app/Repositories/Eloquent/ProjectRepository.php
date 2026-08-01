@@ -2,13 +2,19 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\DTOs\Pagination\PaginatedResultDTO;
+use App\DTOs\Pagination\PaginationParamsDTO;
 use App\Enums\ProjectStatus;
 use App\Models\Project;
+use App\Pagination\Contracts\PaginatorInterface;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
-use Illuminate\Support\Collection;
 
 class ProjectRepository implements ProjectRepositoryInterface
 {
+    public function __construct(
+        private readonly PaginatorInterface $paginator
+    ) {}
+
     public function findByIdForUser(int $id, int $userId): ?Project
     {
         return Project::query()
@@ -17,9 +23,13 @@ class ProjectRepository implements ProjectRepositoryInterface
             ->first();
     }
 
-    public function listForUser(int $userId, ?string $search = null, ?ProjectStatus $status = null): Collection
-    {
-        return Project::query()
+    public function listForUser(
+        int $userId,
+        PaginationParamsDTO $pagination,
+        ?string $search = null,
+        ?ProjectStatus $status = null
+    ): PaginatedResultDTO {
+        $query = Project::query()
             ->where('user_id', $userId)
             ->when($search, function ($query, string $search) {
                 $query->where(function ($query) use ($search) {
@@ -28,8 +38,9 @@ class ProjectRepository implements ProjectRepositoryInterface
                 });
             })
             ->when($status, fn ($query) => $query->where('status', $status))
-            ->latest()
-            ->get();
+            ->orderByDesc('id');
+
+        return $this->paginator->paginate($query, $pagination);
     }
 
     public function save(array $data, ?Project $project = null): Project
