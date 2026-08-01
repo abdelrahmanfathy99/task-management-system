@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -31,6 +32,12 @@ return Application::configure(basePath: dirname(__DIR__))
                         'message' => $e->getMessage(),
                         'errors' => $e->errors(),
                     ], $e->status);
+                }
+
+                if ($e instanceof AuthenticationException) {
+                    return response()->json([
+                        'message' => 'Unauthenticated.',
+                    ], 401);
                 }
 
                 $statusCode = method_exists($e, 'getStatusCode')
